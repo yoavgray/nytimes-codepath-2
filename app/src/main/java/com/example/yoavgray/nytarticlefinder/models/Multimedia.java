@@ -8,7 +8,7 @@ public class Multimedia implements Parcelable{
     Integer height;
     String url;
     String subtype;
-    Legacy legacy;
+    //Legacy legacy;
     String type;
 
     protected Multimedia(Parcel in) {
@@ -16,7 +16,7 @@ public class Multimedia implements Parcelable{
         height  = in.readInt();
         url     = in.readString();
         subtype = in.readString();
-        legacy  = in.readParcelable(Legacy.class.getClassLoader());
+        //legacy  = in.readParcelable(Legacy.class.getClassLoader());
         type    = in.readString();
     }
 
@@ -43,7 +43,7 @@ public class Multimedia implements Parcelable{
         dest.writeInt(height);
         dest.writeString(url);
         dest.writeString(subtype);
-        dest.writeParcelable(legacy, 0);
+        //dest.writeParcelable(legacy, 0);
         dest.writeString(type);
     }
 }

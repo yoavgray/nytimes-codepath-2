@@ -3,12 +3,15 @@ package com.example.yoavgray.nytarticlefinder.activities;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.yoavgray.nytarticlefinder.R;
+import com.example.yoavgray.nytarticlefinder.adapters.ArticleAdapter;
 import com.example.yoavgray.nytarticlefinder.models.Article;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,6 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,9 +34,12 @@ public class SearchActivity extends AppCompatActivity {
     public static final String ARTICLE_API_KEY = "58b8ef6b492349d4b3a3c2968d411aa6";
     public final static String NYTIMES_URL = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
 
+    Article[] articles;
+    ArticleAdapter adapter;
     OkHttpClient client = new OkHttpClient();
 
     @BindView(R.id.app_search_bar) Toolbar appSearchBar;
+    @BindView(R.id.movies_recycler_view) RecyclerView articlesRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +77,16 @@ public class SearchActivity extends AppCompatActivity {
                     Gson gson = new GsonBuilder().create();
                     JsonArray jsonDocs = gson.fromJson(response.body().string(), JsonObject.class)
                             .getAsJsonObject("response").getAsJsonArray("docs");
+                    articles = gson.fromJson(jsonDocs, Article[].class);
 
-                    Article[] results = gson.fromJson(jsonDocs, Article[].class);
+                    SearchActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter = new ArticleAdapter(getBaseContext(), Arrays.asList(articles));
+                            articlesRecyclerView.setAdapter(adapter);
+                            articlesRecyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+                        }
+                    });
                 }
             }
         });

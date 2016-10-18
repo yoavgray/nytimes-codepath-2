@@ -31,4 +31,8 @@ public class Headline implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(main);
     }
+
+    public String getHeadline() {
+        return main;
+    }
 }

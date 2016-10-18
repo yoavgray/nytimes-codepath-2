@@ -73,4 +73,64 @@ public class Article implements Parcelable{
         dest.writeString(type_of_material);
         dest.writeString(_id);
     }
+
+    public String getWeb_url() {
+        return web_url;
+    }
+
+    public String getSnippet() {
+        return snippet;
+    }
+
+    public String getLead_paragraph() {
+        return lead_paragraph;
+    }
+
+    public String getPrint_page() {
+        return print_page;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public Multimedia[] getMultimedia() {
+        return multimedia;
+    }
+
+    public Headline getHeadline() {
+        return headline;
+    }
+
+    public Keywords[] getKeywords() {
+        return keywords;
+    }
+
+    public String getPub_date() {
+        return pub_date;
+    }
+
+    public String getDocument_type() {
+        return document_type;
+    }
+
+    public String getNews_desk() {
+        return news_desk;
+    }
+
+    public String getSection_name() {
+        return section_name;
+    }
+
+    public String getSubsection_name() {
+        return subsection_name;
+    }
+
+    public String getType_of_material() {
+        return type_of_material;
+    }
+
+    public String get_id() {
+        return _id;
+    }
 }
