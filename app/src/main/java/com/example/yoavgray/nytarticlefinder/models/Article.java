@@ -2,6 +2,7 @@ package com.example.yoavgray.nytarticlefinder.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 public class Article implements Parcelable{
     String web_url;
@@ -74,7 +75,7 @@ public class Article implements Parcelable{
         dest.writeString(_id);
     }
 
-    public String getWeb_url() {
+    public String getWebUrl() {
         return web_url;
     }
 
@@ -82,15 +83,15 @@ public class Article implements Parcelable{
         return snippet;
     }
 
-    public String getLead_paragraph() {
+    public String getLeadParagraph() {
         return lead_paragraph;
     }
 
-    public String getPrint_page() {
+    public String getPrintPage() {
         return print_page;
     }
 
-    public String getSource() {
+    public String getSrc() {
         return source;
     }
 
@@ -106,31 +107,41 @@ public class Article implements Parcelable{
         return keywords;
     }
 
-    public String getPub_date() {
+    public String getPubDate() {
         return pub_date;
     }
 
-    public String getDocument_type() {
+    public String getDocumentType() {
         return document_type;
     }
 
-    public String getNews_desk() {
+    public String getNewsDesk() {
         return news_desk;
     }
 
-    public String getSection_name() {
+    public String getSectionName() {
         return section_name;
     }
 
-    public String getSubsection_name() {
+    public String getSubsectionName() {
         return subsection_name;
     }
 
-    public String getType_of_material() {
+    public String getTypeOfMaterial() {
         return type_of_material;
     }
 
-    public String get_id() {
+    public String getId() {
         return _id;
+    }
+
+    @Nullable public String getThumbnailUrl() {
+        String url = null;
+        for (Multimedia multimedia : getMultimedia()) {
+            if (multimedia.getSubtype().equals("thumbnail")) {
+                url = multimedia.getUrl();
+            }
+        }
+        return url;
     }
 }

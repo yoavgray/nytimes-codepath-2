@@ -21,7 +21,7 @@ import android.widget.RelativeLayout;
 import com.example.yoavgray.nytarticlefinder.R;
 import com.example.yoavgray.nytarticlefinder.adapters.ArticleAdapter;
 import com.example.yoavgray.nytarticlefinder.models.Article;
-import com.example.yoavgray.nytarticlefinder.utils.DividerItemDecoration;
+import com.example.yoavgray.nytarticlefinder.utils.SpacesItemDecoration;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -133,11 +133,11 @@ public class SearchActivity extends AppCompatActivity {
         adapter = new ArticleAdapter(this, articles);
         articlesRecyclerView.setAdapter(adapter);
         StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         // Attach the layout manager to the recycler view
         articlesRecyclerView.setLayoutManager(gridLayoutManager);
         RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(getBaseContext(), DividerItemDecoration.VERTICAL_LIST);
+                SpacesItemDecoration(16);
         articlesRecyclerView.addItemDecoration(itemDecoration);
     }
 
@@ -170,7 +170,9 @@ public class SearchActivity extends AppCompatActivity {
      */
     private void loadArticles() {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(NYTIMES_URL).newBuilder();
-//        urlBuilder.addQueryParameter("rsz", "8");
+        urlBuilder.addQueryParameter("api-key", ARTICLE_API_KEY);
+        urlBuilder.addQueryParameter("q", "new york times");
+        urlBuilder.addQueryParameter("page", "1");
         String url = urlBuilder.build().toString();
 
         Request request = new Request.Builder()
@@ -183,6 +185,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 checkConnectivity();
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -196,12 +199,14 @@ public class SearchActivity extends AppCompatActivity {
                     Article[] articlesArray = gson.fromJson(jsonDocs, Article[].class);
 
                     // Should not assign a new reference, but act on this local reference of the data
+                    articles.clear();
                     articles.addAll(new ArrayList<>(Arrays.asList(articlesArray)));
                     // Cannot change Views state outside of the UI thread
                     SearchActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             adapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
                         }
                     });
                 }

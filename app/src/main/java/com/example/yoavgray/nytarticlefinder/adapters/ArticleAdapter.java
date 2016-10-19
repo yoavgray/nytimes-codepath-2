@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.yoavgray.nytarticlefinder.R;
 import com.example.yoavgray.nytarticlefinder.models.Article;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import butterknife.ButterKnife;
 
 public class ArticleAdapter extends
         RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
+    public final static String NYTIMES_URL = "http://www.nytimes.com/";
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.text_view_article_title) TextView titleTextView;
@@ -57,6 +59,7 @@ public class ArticleAdapter extends
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(contactView);
+
         return viewHolder;
     }
 
@@ -64,10 +67,20 @@ public class ArticleAdapter extends
     public void onBindViewHolder(ArticleAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
         Article article = articles.get(position);
+
+        if (article.getThumbnailUrl() == null) {
+            holder.thumbnailImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_nyt, null));
+        } else {
+            Picasso.with(context)
+                    // Load poster image or backdrop according to votes on portrait orientation
+                    .load(NYTIMES_URL + article.getThumbnailUrl())
+                    .fit()
+                    .placeholder(R.drawable.progress_image)
+                    .into(holder.thumbnailImageView);
+        }
         // Set item views based on your views and data model
         holder.titleTextView.setText(article.getHeadline().getHeadline());
-        holder.thumbnailImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_search, null));
-        holder.authorTextView.setText("Roni Ron");
+        holder.authorTextView.setText("Sir John Smith");
     }
 
     @Override

@@ -46,4 +46,24 @@ public class Multimedia implements Parcelable{
         //dest.writeParcelable(legacy, 0);
         dest.writeString(type);
     }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getSubtype() {
+        return subtype;
+    }
+
+    public String getType() {
+        return type;
+    }
 }
