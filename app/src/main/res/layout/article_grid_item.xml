@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
+        android:textAppearance="@style/NYTCoolFont"
         android:layout_marginBottom="@dimen/grid_item_components_margin_bottom"/>
 
     <ImageView

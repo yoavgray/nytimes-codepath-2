@@ -4,4 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="grid_item_components_margin_bottom">4dp</dimen>
+    <dimen name="layout_side_margin">8dp</dimen>
 </resources>

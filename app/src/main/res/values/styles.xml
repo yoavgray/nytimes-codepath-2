@@ -17,4 +17,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="NYTCoolFont" parent="android:TextAppearance">
+        <!-- Custom Attr-->
+        <item name="fontPath">assets/fonts/Calligraffiti.ttf</item>
+    </style>
+
 </resources>

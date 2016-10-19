@@ -3,18 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_search"
-        android:title="Search"
+        android:title="@string/search"
         android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
+    <item android:id="@+id/srp_menu_item_filter"
+        android:orderInCategory="1"
+        app:showAsAction="never"
+        android:title="@string/filter_menu_title" />
+
     <item android:id="@+id/srp_menu_item_sort"
+        android:orderInCategory="2"
         app:showAsAction="never"
         android:title="@string/sort_menu_title" />
-
-    <item android:id="@+id/srp_menu_item_filter"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/filter_menu_title" />
 
     <item
         android:id="@+id/action_settings"

@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="filter_menu_title">Filter</string>
     <string name="sort_menu_title">Sort</string>
+    <string name="retry_caps">RETRY</string>
+    <string name="search">Search</string>
+    <string name="load_articles_error">Unable to load articles. Please check internet connection</string>
 </resources>
