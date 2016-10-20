@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.yoavgray.nytarticlefinder.R;
@@ -13,15 +14,23 @@ import com.example.yoavgray.nytarticlefinder.models.Article;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class ArticleAdapter extends
         RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
     public final static String NYTIMES_URL = "http://www.nytimes.com/";
+    // Try loading different articles with different colors
+    int[] materialColors =
+            { R.color.materialBlue, R.color.materialCyan, R.color.materialDeepOrange,
+                R.color.materialIndigo, R.color.materialPink, R.color.materialPurple, R.color.materialRed };
+    Random rand = new Random();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.linear_layout_grid_item) LinearLayout gridContainer;
         @BindView(R.id.text_view_article_title) TextView titleTextView;
         @BindView(R.id.image_view_article_thumbnail) ImageView thumbnailImageView;
         @BindView(R.id.text_view_article_author) TextView authorTextView;
@@ -76,6 +85,7 @@ public class ArticleAdapter extends
                     .load(NYTIMES_URL + article.getThumbnailUrl())
                     .fit()
                     .placeholder(R.drawable.progress_image)
+                    .transform(new RoundedCornersTransformation(20, 20))
                     .into(holder.thumbnailImageView);
         }
         // Set item views based on your views and data model

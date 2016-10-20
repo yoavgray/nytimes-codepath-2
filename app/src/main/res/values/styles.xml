@@ -19,7 +19,7 @@
 
     <style name="NYTCoolFont" parent="android:TextAppearance">
         <!-- Custom Attr-->
-        <item name="fontPath">assets/fonts/Calligraffiti.ttf</item>
+        <item name="fontPath">fonts/Calligraffiti.ttf</item>
     </style>
 
 </resources>
