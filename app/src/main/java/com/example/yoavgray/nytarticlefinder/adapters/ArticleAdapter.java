@@ -96,9 +96,8 @@ public class ArticleAdapter extends
             holder.getLeadingParagraphTextView().setText(article.getLeadParagraph());
             String[] dateArray = article.getPubDate().split("T");
             holder.getPublishDateTextView().setText(dateArray[0]);
-            holder.getShareArticalImageView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            // Using RetroLambda!!
+            holder.getShareArticalImageView().setOnClickListener((view) -> {
                     // Send an implicit intent to share the article
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
@@ -106,7 +105,6 @@ public class ArticleAdapter extends
                             + article.getWebUrl());
                     sendIntent.setType("text/plain");
                     context.startActivity(sendIntent);
-                }
             });
         }
     }
@@ -127,9 +125,7 @@ public class ArticleAdapter extends
             holder.getTitleTextView().setText(article.getHeadline().getHeadline());
             String[] dateArray = article.getPubDate().split("T");
             holder.getPublishDateTextView().setText(dateArray[0]);
-            holder.getShareArticalImageView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            holder.getShareArticalImageView().setOnClickListener((view) -> {
                     // Send an implicit intent to share the article
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
@@ -137,7 +133,6 @@ public class ArticleAdapter extends
                             + article.getWebUrl());
                     sendIntent.setType("text/plain");
                     context.startActivity(sendIntent);
-                }
             });
         }
     }

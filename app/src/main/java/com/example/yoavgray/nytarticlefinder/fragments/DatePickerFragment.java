@@ -25,8 +25,6 @@ public class DatePickerFragment extends DialogFragment {
 
     @BindView(R.id.date_picker) DatePicker datePicker;
 
-    private DatePickerFragment.DateSelectedListener selectionListener;
-
     public DatePickerFragment() {
         // Required empty public constructor
     }
@@ -38,13 +36,6 @@ public class DatePickerFragment extends DialogFragment {
         args.putString(WHICH_DATE, whichDate);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    // The call when a sort parameter is clicked.
-    public void onDateSelected(int year, int month, int day, String whichDate) {
-        if (selectionListener != null) {
-            selectionListener.onDateSelected(year, month, day, whichDate);
-        }
     }
 
     @Override
@@ -64,24 +55,6 @@ public class DatePickerFragment extends DialogFragment {
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         whichDate = getArguments().getString(WHICH_DATE, "from");
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof DatePickerFragment.DateSelectedListener) {
-            selectionListener = (DatePickerFragment.DateSelectedListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        selectionListener = null;
     }
 
     public interface DateSelectedListener {

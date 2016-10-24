@@ -182,12 +182,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
      * This method sets the SwipeRefreshLayout on start
      */
     private void setupSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadArticles(0);
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> loadArticles(0));
         // Configure the refreshing colors
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -249,35 +244,29 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     private void setRecyclerViewsListeners() {
         // Open the clicked article with a Chrome Custom Tab
         ItemClickSupport.addTo(articlesRecyclerView).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
-                        String url = articles.get(position).getWebUrl();
-                        CustomTabsIntent customTabsIntent = buildCustomTabsIntent(url);
-                        // and launch the desired Url with CustomTabsIntent.launchUrl()
-                        customTabsIntent.launchUrl(SearchActivity.this, Uri.parse(url));
-                    }
+                (recyclerView, position, v) -> {
+                    // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
+                    String url = articles.get(position).getWebUrl();
+                    CustomTabsIntent customTabsIntent = buildCustomTabsIntent(url);
+                    // and launch the desired Url with CustomTabsIntent.launchUrl()
+                    customTabsIntent.launchUrl(SearchActivity.this, Uri.parse(url));
                 }
         );
 
         // Maintain the list of news desk categories when a user clicks on a category
         ItemClickSupport.addTo(categoryRecyclerView).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        boolean isIncluded = categories.get(position).isIncluded();
-                        categories.get(position).setIncluded(!isIncluded);
-                        categoriesAdapter.notifyItemChanged(position);
-                        isIncluded = !isIncluded;
-                        String categoryName = categories.get(position).getName();
-                        if (isIncluded) {
-                            includedCategoriesHashSet.add(categoryName);
-                        } else {
-                            includedCategoriesHashSet.remove(categoryName);
-                        }
-                        loadArticles(0);
+                (recyclerView, position, v) -> {
+                    boolean isIncluded = categories.get(position).isIncluded();
+                    categories.get(position).setIncluded(!isIncluded);
+                    categoriesAdapter.notifyItemChanged(position);
+                    isIncluded = !isIncluded;
+                    String categoryName = categories.get(position).getName();
+                    if (isIncluded) {
+                        includedCategoriesHashSet.add(categoryName);
+                    } else {
+                        includedCategoriesHashSet.remove(categoryName);
                     }
+                    loadArticles(0);
                 }
         );
     }
@@ -324,12 +313,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                 .make(searchActivityLayout,
                         loadArticlesErrorString,
                         Snackbar.LENGTH_INDEFINITE)
-                .setAction(retryString, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        loadArticles(0);
-                    }
-                })
+                .setAction(retryString, v -> loadArticles(0))
             .setActionTextColor(Color.RED).show();
         }
     }
@@ -368,12 +352,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 checkConnectivity();
-                SearchActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                SearchActivity.this.runOnUiThread(() -> swipeRefreshLayout.setRefreshing(false));
             }
 
             @Override
@@ -390,12 +369,9 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                     // Should not assign a new reference, but act on this local reference of the data
                     articles.addAll(new ArrayList<>(Arrays.asList(articlesArray)));
                     // Cannot change Views state outside of the UI thread
-                    SearchActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            articleAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
+                    SearchActivity.this.runOnUiThread(() -> {
+                        articleAdapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
                     });
                 }
             }
@@ -420,7 +396,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             // For the last white space
             newsDeskParam.setLength(newsDeskParam.length() - 1);
             newsDeskParam.append(")");
-            urlBuilder.addQueryParameter("fq", newsDeskParam.toString());
+            urlBuilder.addQueryParameter(NEWS_DESK, newsDeskParam.toString());
         }
 
         return urlBuilder.build().toString();

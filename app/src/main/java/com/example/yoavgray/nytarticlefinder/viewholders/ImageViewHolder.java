@@ -12,7 +12,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ImageViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.linear_layout_grid_item) RelativeLayout gridContainer;
     @BindView(R.id.text_view_article_title) TextView titleTextView;
     @BindView(R.id.image_view_article_thumbnail) ImageView thumbnailImageView;
     @BindView(R.id.text_view_article_publish_date) TextView publishDateTextView;
@@ -23,10 +22,6 @@ public class ImageViewHolder extends RecyclerView.ViewHolder {
     public ImageViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-    }
-
-    public RelativeLayout getGridContainer() {
-        return gridContainer;
     }
 
     public TextView getTitleTextView() {

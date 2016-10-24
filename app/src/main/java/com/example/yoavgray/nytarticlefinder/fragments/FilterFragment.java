@@ -140,11 +140,12 @@ public class FilterFragment extends DialogFragment implements DatePickerFragment
 
     @Override
     public void onDateSelected(int year, int month, int day, String whichDate) {
+        // Format the date to what we're used to
         StringBuilder chosenDateToShow = new StringBuilder();
         chosenDateToShow.append(month < 10 ? "0" + month : month).append("/");
         chosenDateToShow.append(day < 10 ? "0" + day : day).append("/");
         chosenDateToShow.append(year);
-
+        // Format date like it should be for the query parameter
         StringBuilder chosenDateToSend = new StringBuilder();
         chosenDateToSend.append(year);
         chosenDateToSend.append(month < 10 ? "0" + month : month);
