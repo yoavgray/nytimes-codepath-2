@@ -24,7 +24,7 @@
         android:layout_alignParentLeft="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/grid_item_components_margin_bottom"/>
+        android:layout_marginBottom="8dp"/>
 
     <TextView
         android:id="@+id/text_view_article_publish_date"

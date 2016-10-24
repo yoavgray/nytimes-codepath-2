@@ -117,9 +117,8 @@ public class ArticleAdapter extends
             Glide.with(context)
                     // Load poster image or backdrop according to votes on portrait orientation
                     .load(NYTIMES_URL + article.getThumbnailUrl())
-                    .fitCenter()
+                    .override(250, 200)
                     .placeholder(R.drawable.progress_image)
-                    .bitmapTransform(new RoundedCornersTransformation(context, 20, 20))
                     .into(holder.getThumbnailImageView());
 
             // Set item views based on your views and data model
