@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 
@@ -57,8 +58,7 @@ public class DatePickerFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Fetch arguments from bundle and set title
-        getDialog().setTitle("Choose date");
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         // Show soft keyboard automatically and request focus to field
         getDialog().getWindow().setSoftInputMode(
