@@ -53,4 +53,5 @@ dependencies {
     compile 'org.parceler:parceler-api:1.1.6'
     apt 'org.parceler:parceler:1.1.6'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.android.support:customtabs:25.0.0'
 }

@@ -2,7 +2,7 @@
 
 **NYTArticleFinder** is an android app that allows a user to search for articles on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **16** hours spent in total
+Time spent: **20** hours spent in total
 
 ## User Stories
 
@@ -16,7 +16,7 @@ The following **required** functionality is completed:
   * [x] News desk values (Arts, Fashion & Style, Sports)
   * [x] Sort order (oldest or newest)
 * [x] Subsequent searches have any filters applied to the search results
-* [ ] User can tap on any image in results to see the full text of article **full-screen**
+* [x] User can tap on any image in results to see the full text of article **full-screen**
 * [x] User can **scroll down to see more articles**. The maximum number of articles is limited by the API search.
 
 The following **optional** features are implemented:
@@ -38,7 +38,7 @@ The following **bonus** features are implemented:
 * [ ] Uses [retrolambda expressions](http://guides.codepath.com/android/Lambda-Expressions) to cleanup event handling blocks.
 * [x] Leverages the popular [GSON library](http://guides.codepath.com/android/Using-Android-Async-Http-Client#decoding-with-gson-library) to streamline the parsing of JSON data.
 * [ ] Leverages the [Retrofit networking library](http://guides.codepath.com/android/Consuming-APIs-with-Retrofit) to access the New York Times API.
-* [ ] Replace the embedded `WebView` with [Chrome Custom Tabs](http://guides.codepath.com/android/Chrome-Custom-Tabs) using a custom action button for sharing. (_**2 points**_)
+* [x] Replace the embedded `WebView` with [Chrome Custom Tabs](http://guides.codepath.com/android/Chrome-Custom-Tabs) using a custom action button for sharing. (_**2 points**_)
 
 The following **additional** features are implemented:
 

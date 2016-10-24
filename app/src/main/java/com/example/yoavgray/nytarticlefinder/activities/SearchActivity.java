@@ -1,15 +1,22 @@
 package com.example.yoavgray.nytarticlefinder.activities;
 
 import android.app.FragmentManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +31,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.yoavgray.nytarticlefinder.R;
 import com.example.yoavgray.nytarticlefinder.adapters.ArticleAdapter;
@@ -120,8 +126,6 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         client = new OkHttpClient();
         articles = new ArrayList<>();
         // Setup Layouts
-        //TODO: add a progress bar when loading articles
-        //TODO: which toolbar am i using?!?!
         setupToolBar();
         setCategoriesRecyclerView();
         setArticlesRecyclerView();
@@ -136,7 +140,6 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-
         savedInstanceState.putParcelable(INCLUDED_CATEGORIES, Parcels.wrap(includedCategoriesHashSet));
         savedInstanceState.putParcelable(CATEGORIES_LIST, Parcels.wrap(categories));
         savedInstanceState.putInt(SORT_ID, sortId);
@@ -193,7 +196,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     }
 
     /**
-     * This method sets the RecyclerView on start
+     * This method sets the Articles RecyclerView on start
      */
     private void setArticlesRecyclerView() {
         articleAdapter = new ArticleAdapter(this, articles);
@@ -220,6 +223,9 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         });
     }
 
+    /**
+     * This method sets the Categories RecyclerView on start
+     */
     private void setCategoriesRecyclerView() {
         if (categories == null) {
             String[] categoriesArray = {"Adventure Sports", "Cars", "Culture", "Fashion", "Food", "Foreign", "Health", "Jobs", "Movies", "Sports", "Technology"};
@@ -241,15 +247,21 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
      * This method sets the RecyclerViews listeners with the help of the fabulous ItemClickSupport!
      */
     private void setRecyclerViewsListeners() {
+        // Open the clicked article with a Chrome Custom Tab
         ItemClickSupport.addTo(articlesRecyclerView).setOnItemClickListener(
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Toast.makeText(SearchActivity.this, "Open Article!", Toast.LENGTH_SHORT).show();
+                        // Use a CustomTabsIntent.Builder to configure CustomTabsIntent.
+                        String url = articles.get(position).getWebUrl();
+                        CustomTabsIntent customTabsIntent = buildCustomTabsIntent(url);
+                        // and launch the desired Url with CustomTabsIntent.launchUrl()
+                        customTabsIntent.launchUrl(SearchActivity.this, Uri.parse(url));
                     }
                 }
         );
 
+        // Maintain the list of news desk categories when a user clicks on a category
         ItemClickSupport.addTo(categoryRecyclerView).setOnItemClickListener(
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
@@ -268,6 +280,34 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                     }
                 }
         );
+    }
+
+    /**
+     * This method adds support to open an article in a Chrome custom tab
+     * @param url the url to open the tab in
+     * @return a CustomTabIntent
+     */
+    private CustomTabsIntent buildCustomTabsIntent(String url) {
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        // Set toolbar color and set custom actions before invoking build()
+        builder.setToolbarColor(ContextCompat.getColor(SearchActivity.this, R.color.colorPrimaryDark));
+        builder.addDefaultShareMenuItem();
+        // Build a PendingIntent for when a user clicks on the share icon
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_share);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, url);
+        int requestCode = 100;
+        PendingIntent pendingIntent = PendingIntent.getActivity(SearchActivity.this,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Map the bitmap, text, and pending intent to this icon
+        // Set tint to be true so it matches the toolbar color
+        builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
+        // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
+        return builder.build();
     }
 
 
