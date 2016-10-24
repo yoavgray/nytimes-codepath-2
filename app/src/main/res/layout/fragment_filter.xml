@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:id="@+id/relative_layout_date_pickers"
-        android:background="@drawable/grid_item_background"
+        android:background="@drawable/thumb_grid_item_background"
         android:padding="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

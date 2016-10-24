@@ -6,29 +6,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.example.yoavgray.nytarticlefinder.R;
 import com.example.yoavgray.nytarticlefinder.models.Article;
+import com.example.yoavgray.nytarticlefinder.viewholders.ImageViewHolder;
+import com.example.yoavgray.nytarticlefinder.viewholders.TextViewHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Random;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class ArticleAdapter extends
-        RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
+        RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public final static String NYTIMES_URL = "http://www.nytimes.com/";
-    // Try loading different articles with different colors
-    int[] materialColors =
-            { R.color.materialBlue, R.color.materialCyan, R.color.materialDeepOrange,
-                R.color.materialIndigo, R.color.materialPink, R.color.materialPurple, R.color.materialRed };
-    Random rand = new Random();
+
+    private final int TEXT = 0, IMAGE = 1;
 
     // Store a member variable for the contacts
     private List<Article> articles;
@@ -40,76 +32,113 @@ public class ArticleAdapter extends
         this.context = context;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.linear_layout_grid_item) RelativeLayout gridContainer;
-        @BindView(R.id.text_view_article_title) TextView titleTextView;
-        @BindView(R.id.image_view_article_thumbnail) ImageView thumbnailImageView;
-        @BindView(R.id.text_view_article_publish_date) TextView publishDateTextView;
-        @BindView(R.id.image_view_share_article) ImageView shareArticalImageView;
-
-        // We also create a constructor that accepts the entire item row
-        // and does the view lookups to find each subview
-        public ViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
-
     // Easy access to the context object in the recyclerview
     private Context getContext() {
         return context;
     }
 
     @Override
-    public ArticleAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+    public int getItemCount() {
+        return articles.size();
+    }
 
-        // Inflate the custom layout
-        View articleView = inflater.inflate(R.layout.article_grid_item, parent, false);
+    @Override
+    public int getItemViewType(int position) {
+        if (articles.get(position).getThumbnailUrl() == null) {
+            return TEXT;
+        } else {
+            return IMAGE;
+        }
+    }
 
-        // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(articleView);
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
+        switch (viewType) {
+            case TEXT:
+                View v1 = inflater.inflate(R.layout.article_text_grid_item, viewGroup, false);
+                viewHolder = new TextViewHolder(v1);
+                break;
+            case IMAGE:
+                View v2 = inflater.inflate(R.layout.article_thumbnail_grid_item, viewGroup, false);
+                viewHolder = new ImageViewHolder(v2);
+                break;
+            default:
+                View v = inflater.inflate(R.layout.article_text_grid_item, viewGroup, false);
+                viewHolder = new TextViewHolder(v);
+                break;
+        }
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ArticleAdapter.ViewHolder holder, int position) {
-        // Get the data model based on position
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        switch (viewHolder.getItemViewType()) {
+            case TEXT:
+                TextViewHolder textViewHolder = (TextViewHolder) viewHolder;
+                configureTextViewHolder(textViewHolder, position);
+                break;
+            case IMAGE:
+                ImageViewHolder imageViewHolder = (ImageViewHolder) viewHolder;
+                configureImageViewHolder(imageViewHolder, position);
+                break;
+        }
+    }
+
+    private void configureTextViewHolder(TextViewHolder holder, int position) {
         final Article article = articles.get(position);
 
-        if (article.getThumbnailUrl() == null) {
-            holder.thumbnailImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_nyt));
-        } else {
+        if (article != null) {
+            // Set item views based on your views and data model
+            holder.getTitleTextView().setText(article.getHeadline().getHeadline());
+            holder.getLeadingParagraphTextView().setText(article.getLeadParagraph());
+            String[] dateArray = article.getPubDate().split("T");
+            holder.getPublishDateTextView().setText(dateArray[0]);
+            holder.getShareArticalImageView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Send an implicit intent to share the article
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey! Here's an interesting article:\n"
+                            + article.getWebUrl());
+                    sendIntent.setType("text/plain");
+                    context.startActivity(sendIntent);
+                }
+            });
+        }
+    }
+
+    private void configureImageViewHolder(ImageViewHolder holder, int position) {
+        final Article article = articles.get(position);
+
+        if (article != null) {
             Picasso.with(context)
                     // Load poster image or backdrop according to votes on portrait orientation
                     .load(NYTIMES_URL + article.getThumbnailUrl())
                     .fit()
                     .placeholder(R.drawable.progress_image)
                     .transform(new RoundedCornersTransformation(20, 20))
-                    .into(holder.thumbnailImageView);
-        }
-        // Set item views based on your views and data model
-        holder.titleTextView.setText(article.getHeadline().getHeadline());
-        String[] dateArray = article.getPubDate().split("T");
-        holder.publishDateTextView.setText(dateArray[0]);
-        holder.shareArticalImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Send an implicit intent to share the article
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey! Here's an interesting article:\n"
-                        + article.getWebUrl());
-                sendIntent.setType("text/plain");
-                context.startActivity(sendIntent);
-            }
-        });
-    }
+                    .into(holder.getThumbnailImageView());
 
-    @Override
-    public int getItemCount() {
-        return articles.size();
+            // Set item views based on your views and data model
+            holder.getTitleTextView().setText(article.getHeadline().getHeadline());
+            String[] dateArray = article.getPubDate().split("T");
+            holder.getPublishDateTextView().setText(dateArray[0]);
+            holder.getShareArticalImageView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Send an implicit intent to share the article
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey! Here's an interesting article:\n"
+                            + article.getWebUrl());
+                    sendIntent.setType("text/plain");
+                    context.startActivity(sendIntent);
+                }
+            });
+        }
     }
 }
