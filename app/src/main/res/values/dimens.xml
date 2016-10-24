@@ -5,4 +5,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="grid_item_components_margin_bottom">4dp</dimen>
     <dimen name="layout_side_margin">8dp</dimen>
+    <dimen name="list_item_horizontal_padding">2dp</dimen>
+    <dimen name="category_recycle_view_height">44dp</dimen>
 </resources>

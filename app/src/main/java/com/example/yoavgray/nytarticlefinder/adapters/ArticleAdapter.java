@@ -29,20 +29,6 @@ public class ArticleAdapter extends
                 R.color.materialIndigo, R.color.materialPink, R.color.materialPurple, R.color.materialRed };
     Random rand = new Random();
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.linear_layout_grid_item) LinearLayout gridContainer;
-        @BindView(R.id.text_view_article_title) TextView titleTextView;
-        @BindView(R.id.image_view_article_thumbnail) ImageView thumbnailImageView;
-        @BindView(R.id.text_view_article_author) TextView authorTextView;
-
-        // We also create a constructor that accepts the entire item row
-        // and does the view lookups to find each subview
-        public ViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
-
     // Store a member variable for the contacts
     private List<Article> articles;
     private Context context;
@@ -51,6 +37,21 @@ public class ArticleAdapter extends
     public ArticleAdapter(Context context, List<Article> articles) {
         this.articles = articles;
         this.context = context;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.linear_layout_grid_item) LinearLayout gridContainer;
+        @BindView(R.id.text_view_article_title) TextView titleTextView;
+        @BindView(R.id.image_view_article_thumbnail) ImageView thumbnailImageView;
+        @BindView(R.id.text_view_article_author) TextView authorTextView;
+        @BindView(R.id.text_view_article_publish_date) TextView publishDateTextView;
+
+        // We also create a constructor that accepts the entire item row
+        // and does the view lookups to find each subview
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
     }
 
     // Easy access to the context object in the recyclerview
@@ -64,10 +65,10 @@ public class ArticleAdapter extends
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View contactView = inflater.inflate(R.layout.article_grid_item, parent, false);
+        View articleView = inflater.inflate(R.layout.article_grid_item, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(contactView);
+        ViewHolder viewHolder = new ViewHolder(articleView);
 
         return viewHolder;
     }
@@ -78,7 +79,7 @@ public class ArticleAdapter extends
         Article article = articles.get(position);
 
         if (article.getThumbnailUrl() == null) {
-            holder.thumbnailImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_nyt, null));
+            holder.thumbnailImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_nyt));
         } else {
             Picasso.with(context)
                     // Load poster image or backdrop according to votes on portrait orientation
@@ -91,6 +92,8 @@ public class ArticleAdapter extends
         // Set item views based on your views and data model
         holder.titleTextView.setText(article.getHeadline().getHeadline());
         holder.authorTextView.setText("Sir John Smith");
+        String[] dateArray = article.getPubDate().split("T");
+        holder.publishDateTextView.setText(dateArray[0]);
     }
 
     @Override

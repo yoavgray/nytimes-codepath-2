@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
+        android:textStyle="bold"
         android:textAppearance="@style/NYTCoolFont"
         android:layout_marginBottom="@dimen/grid_item_components_margin_bottom"/>
 
@@ -26,6 +27,15 @@
 
     <TextView
         android:id="@+id/text_view_article_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/grid_item_components_margin_bottom"/>
+
+    <TextView
+        android:id="@+id/text_view_article_publish_date"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:textColor="@color/whiteColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
