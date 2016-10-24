@@ -7,14 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.example.yoavgray.nytarticlefinder.R;
 import com.example.yoavgray.nytarticlefinder.models.Article;
 import com.example.yoavgray.nytarticlefinder.viewholders.ImageViewHolder;
 import com.example.yoavgray.nytarticlefinder.viewholders.TextViewHolder;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class ArticleAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -113,12 +114,12 @@ public class ArticleAdapter extends
         final Article article = articles.get(position);
 
         if (article != null) {
-            Picasso.with(context)
+            Glide.with(context)
                     // Load poster image or backdrop according to votes on portrait orientation
                     .load(NYTIMES_URL + article.getThumbnailUrl())
-                    .fit()
+                    .fitCenter()
                     .placeholder(R.drawable.progress_image)
-                    .transform(new RoundedCornersTransformation(20, 20))
+                    .bitmapTransform(new RoundedCornersTransformation(context, 20, 20))
                     .into(holder.getThumbnailImageView());
 
             // Set item views based on your views and data model
