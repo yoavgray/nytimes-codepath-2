@@ -5,7 +5,7 @@
     <string name="sort_menu_title">Sort</string>
     <string name="retry_caps">RETRY</string>
     <string name="search">Search</string>
-    <string name="load_articles_error">Unable to load articles. Please check internet connection</string>
+    <string name="load_articles_error">Unable to load articles. Please check internet connection or WiFi settings</string>
     <string name="article_search_hint">Search articles</string>
     <string name="sort_publish_date_newest_first">Newest First</string>
     <string name="sort_publish_date_oldest_first">Oldest First</string>

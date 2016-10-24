@@ -319,7 +319,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         boolean isConnected = (activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting());
-        if (!isConnected) {
+        if (!isConnected || !isOnline()) {
             Snackbar
                 .make(searchActivityLayout,
                         loadArticlesErrorString,
@@ -332,6 +332,17 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                 })
             .setActionTextColor(Color.RED).show();
         }
+    }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e)
+            { e.printStackTrace(); }
+        return false;
     }
 
     /**
@@ -368,6 +379,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (!response.isSuccessful()) {
+                    checkConnectivity();
                     throw new IOException("Unexpected code " + response);
                 } else {
                     Gson gson = new GsonBuilder().create();
