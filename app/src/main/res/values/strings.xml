@@ -10,8 +10,14 @@
     <string name="sort_publish_date_newest_first">Newest First</string>
     <string name="sort_publish_date_oldest_first">Oldest First</string>
 
-    <string name="sort_publish_date">Publish Date:</string>
+    <string name="filter_publish_date">Publish Date:</string>
+    <string name="sort">Sort:</string>
     <string name="from">From:</string>
     <string name="to">To:</string>
     <string name="save">Save</string>
+
+    <string-array name="sort_array">
+        <item>Newest First</item>
+        <item>Oldest First</item>
+    </string-array>
 </resources>

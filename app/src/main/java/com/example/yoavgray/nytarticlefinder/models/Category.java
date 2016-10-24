@@ -1,8 +1,13 @@
 package com.example.yoavgray.nytarticlefinder.models;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class Category {
     String name;
     boolean isIncluded;
+
+    public Category() {}
 
     public Category(String name) {
         this.name = name;

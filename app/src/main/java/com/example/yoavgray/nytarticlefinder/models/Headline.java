@@ -1,35 +1,17 @@
 package com.example.yoavgray.nytarticlefinder.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import org.parceler.Parcel;
 
-public class Headline implements Parcelable {
+@Parcel
+public class Headline {
     String main;
 
-    protected Headline(Parcel in) {
-        main = in.readString();
+    public Headline() {
+
     }
 
-    public static final Creator<Headline> CREATOR = new Creator<Headline>() {
-        @Override
-        public Headline createFromParcel(Parcel in) {
-            return new Headline(in);
-        }
-
-        @Override
-        public Headline[] newArray(int size) {
-            return new Headline[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(main);
+    public Headline(String main) {
+        this.main = main;
     }
 
     public String getHeadline() {

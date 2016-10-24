@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linear_layout_grid_item"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/grid_item_background"
@@ -21,12 +20,8 @@
 
     <ImageView
         android:id="@+id/image_view_article_thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/grid_item_components_margin_bottom"/>
-
-    <TextView
-        android:id="@+id/text_view_article_author"
+        android:layout_below="@id/text_view_article_title"
+        android:layout_alignParentLeft="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/grid_item_components_margin_bottom"/>
@@ -36,7 +31,18 @@
         android:textSize="12sp"
         android:textStyle="italic"
         android:textColor="@color/whiteColor"
+        android:layout_below="@id/image_view_article_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/image_view_share_article"
+        android:src="@drawable/ic_share"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginRight="2dp"
+        android:layout_alignTop="@id/text_view_article_publish_date"
+        android:layout_alignParentRight="true"
+        />
+
+</RelativeLayout>

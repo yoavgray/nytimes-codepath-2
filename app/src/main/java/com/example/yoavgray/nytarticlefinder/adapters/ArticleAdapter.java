@@ -1,12 +1,13 @@
 package com.example.yoavgray.nytarticlefinder.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.yoavgray.nytarticlefinder.R;
@@ -40,11 +41,11 @@ public class ArticleAdapter extends
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.linear_layout_grid_item) LinearLayout gridContainer;
+        @BindView(R.id.linear_layout_grid_item) RelativeLayout gridContainer;
         @BindView(R.id.text_view_article_title) TextView titleTextView;
         @BindView(R.id.image_view_article_thumbnail) ImageView thumbnailImageView;
-        @BindView(R.id.text_view_article_author) TextView authorTextView;
         @BindView(R.id.text_view_article_publish_date) TextView publishDateTextView;
+        @BindView(R.id.image_view_share_article) ImageView shareArticalImageView;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -76,7 +77,7 @@ public class ArticleAdapter extends
     @Override
     public void onBindViewHolder(ArticleAdapter.ViewHolder holder, int position) {
         // Get the data model based on position
-        Article article = articles.get(position);
+        final Article article = articles.get(position);
 
         if (article.getThumbnailUrl() == null) {
             holder.thumbnailImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_nyt));
@@ -91,9 +92,20 @@ public class ArticleAdapter extends
         }
         // Set item views based on your views and data model
         holder.titleTextView.setText(article.getHeadline().getHeadline());
-        holder.authorTextView.setText("Sir John Smith");
         String[] dateArray = article.getPubDate().split("T");
         holder.publishDateTextView.setText(dateArray[0]);
+        holder.shareArticalImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Send an implicit intent to share the article
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey! Here's an interesting article:\n"
+                        + article.getWebUrl());
+                sendIntent.setType("text/plain");
+                context.startActivity(sendIntent);
+            }
+        });
     }
 
     @Override

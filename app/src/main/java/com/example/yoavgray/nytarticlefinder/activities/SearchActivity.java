@@ -21,7 +21,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -31,7 +30,6 @@ import com.example.yoavgray.nytarticlefinder.R;
 import com.example.yoavgray.nytarticlefinder.adapters.ArticleAdapter;
 import com.example.yoavgray.nytarticlefinder.adapters.CategoryAdapter;
 import com.example.yoavgray.nytarticlefinder.fragments.FilterFragment;
-import com.example.yoavgray.nytarticlefinder.fragments.SortFragment;
 import com.example.yoavgray.nytarticlefinder.models.Article;
 import com.example.yoavgray.nytarticlefinder.models.Category;
 import com.example.yoavgray.nytarticlefinder.utils.EndlessRecyclerViewScrollListener;
@@ -65,12 +63,12 @@ import okhttp3.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class SearchActivity extends AppCompatActivity implements SortFragment.SortParamSelectedListener {
+public class SearchActivity extends AppCompatActivity implements FilterFragment.PrefParamsSelectedListener {
     public static final String ARTICLE_API_KEY = "58b8ef6b492349d4b3a3c2968d411aa6";
     public final static String NYTIMES_URL = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
     private static final String INCLUDED_CATEGORIES = "includedCategories";
     private static final String CATEGORIES_LIST = "categoriesList";
-    private static final String SORT_ID = "sortId";
+    private static final String SORT_ID = "sort";
     private static final String QUERY_KEY = "q";
     private final static String PAGE_KEY = "page";
     private final static String BEGIN_DATE = "begin_date";
@@ -373,14 +371,6 @@ public class SearchActivity extends AppCompatActivity implements SortFragment.So
             urlBuilder.addQueryParameter("fq", newsDeskParam.toString());
         }
 
-        if (beginDate != null && !beginDate.isEmpty()) {
-            urlBuilder.addQueryParameter(BEGIN_DATE, beginDate);
-        }
-
-        if (endDate != null && !endDate.isEmpty()) {
-            urlBuilder.addQueryParameter(END_DATE, endDate);
-        }
-
         return urlBuilder.build().toString();
     }
 
@@ -413,7 +403,7 @@ public class SearchActivity extends AppCompatActivity implements SortFragment.So
     private void customizeSubmitButton(SearchView searchView) {
         // Set the submit button to be a custom button
         try {
-            Field searchField =SearchView.class.getDeclaredField("mGoButton");
+            Field searchField = SearchView.class.getDeclaredField("mGoButton");
             searchField.setAccessible(true);
             ImageView submitButton = (ImageView) searchField.get(searchView);
             submitButton.setImageResource(R.drawable.ic_submit);
@@ -443,35 +433,27 @@ public class SearchActivity extends AppCompatActivity implements SortFragment.So
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sort:
-                launchSortDialog();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void launchSortDialog() {
-        FragmentManager fm = getFragmentManager();
-        SortFragment sortFragment = SortFragment.newInstance(sortId);
-        sortFragment.show(fm, "fragment_sort");
-    }
-
-
-    @Override
-    public void onSortParamSelected(int sortId) {
-        String sortOrder = sortId == 0 ? "newest" : "oldest";
-        queryParamsHashMap.put("sort", sortOrder);
-        // Reload articles with new sort order
-        loadArticles(0);
-    }
-
     @OnClick(R.id.fab_filter)
     public void launchFilterDialog() {
         FragmentManager fm = getFragmentManager();
-        FilterFragment filterFragment = FilterFragment.newInstance(beginDate, endDate);
-        filterFragment.show(fm, "fragment_sort");
+        FilterFragment filterFragment = FilterFragment.newInstance(beginDate, endDate, sortId);
+        filterFragment.show(fm, "fragment_filter");
+    }
+
+    @Override
+    public void onPrefParamsSaved(String beginDate, String endDate, int sortId) {
+        if (beginDate != null && !beginDate.isEmpty()) {
+            queryParamsHashMap.put(BEGIN_DATE, beginDate);
+            this.beginDate = beginDate;
+        }
+
+        if (endDate != null && !endDate.isEmpty()) {
+            queryParamsHashMap.put(END_DATE, endDate);
+            this.endDate = endDate;
+        }
+
+        queryParamsHashMap.put(SORT_ID, sortId == 0 ? "newest" : "oldest");
+        this.sortId = sortId;
+        loadArticles(0);
     }
 }
