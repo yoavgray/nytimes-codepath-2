@@ -2,7 +2,7 @@
 
 **NYTArticleFinder** is an android app that allows a user to search for articles on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **20** hours spent in total
+Time spent: **24** hours spent in total
 
 ## User Stories
 
@@ -49,31 +49,23 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/to8dlpg.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+I had less time than in the first project but I did most of the things. 
+I encountered some problems with Retrofit so I hope to implement it in the
+next project. I was super excited to learn about the Views data binding
+and i'm definitely going to use that.
 
 ## Open-source libraries used
 
-- [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
+- [Parceler](https://github.com/johncarl81/parceler) - Android Parcelables made easy through code generation
+- [Calligraphy](https://github.com/chrisjenx/Calligraphy) - Use cool fonts very easily!
+- [OkHttp](http://square.github.io/okhttp/) - An HTTP & HTTP/2 client for Android and Java applications
 - [Glide](http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en) - Image loading and caching library for Android
-
-## License
-
-    Copyright [yyyy] [name of copyright owner]
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+- [ButterKnife](http://jakewharton.github.io/butterknife/) - View Binding for android
+- [Gson](https://github.com/google/gson) - Java library that can be used to convert Java Objects into their JSON representation
+- [Wasabeef](https://github.com/wasabeef/glide-transformations) - Tweak images downloaded from Glide!

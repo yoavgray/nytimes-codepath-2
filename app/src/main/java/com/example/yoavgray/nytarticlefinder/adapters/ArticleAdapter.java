@@ -15,8 +15,6 @@ import com.example.yoavgray.nytarticlefinder.viewholders.TextViewHolder;
 
 import java.util.List;
 
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
-
 public class ArticleAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public final static String NYTIMES_URL = "http://www.nytimes.com/";
@@ -95,8 +93,10 @@ public class ArticleAdapter extends
             // Set item views based on your views and data model
             holder.getTitleTextView().setText(article.getHeadline().getHeadline());
             holder.getLeadingParagraphTextView().setText(article.getLeadParagraph());
-            String[] dateArray = article.getPubDate().split("T");
-            holder.getPublishDateTextView().setText(dateArray[0]);
+            if (article.getPubDate() != null) {
+                String[] dateArray = article.getPubDate().split("T");
+                holder.getPublishDateTextView().setText(dateArray[0]);
+            }
             // Using RetroLambda!!
             holder.getShareArticalImageView().setOnClickListener((view) -> {
                     // Send an implicit intent to share the article

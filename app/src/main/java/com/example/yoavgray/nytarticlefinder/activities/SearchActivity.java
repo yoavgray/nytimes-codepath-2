@@ -45,6 +45,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.parceler.Parcels;
 
 import java.io.IOException;
@@ -364,7 +365,8 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                     JsonArray jsonDocs = gson.fromJson(response.body().string(), JsonObject.class)
                             .getAsJsonObject("response").getAsJsonArray("docs");
                     Article[] articlesArray = gson.fromJson(jsonDocs, Article[].class);
-
+                    // Must close the response body!
+                    response.body().close();
                     // Should not assign a new reference, but act on this local reference of the data
                     articles.addAll(new ArrayList<>(Arrays.asList(articlesArray)));
                     // Cannot change Views state outside of the UI thread
@@ -418,7 +420,11 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                if (StringUtils.isEmpty(newText)) {
+                    queryParamsHashMap.remove(QUERY_KEY);
+                    loadArticles(0);
+                }
+                return true;
             }
         });
     }
@@ -439,7 +445,29 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     * This method customized the X button to load fresh articles with no queries
+     * @param searchView
+     */
+    private void customizeCloseButton(SearchView searchView) {
+        Field searchField = null;
+        try {
+            searchField = SearchView.class.getDeclaredField("mCloseButton");
+            searchField.setAccessible(true);
+            ImageView closeButton = (ImageView) searchField.get(searchView);
+            closeButton.setOnClickListener(view -> {
+                queryParamsHashMap.remove(QUERY_KEY);
+                loadArticles(0);
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+            });
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -455,6 +483,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         searchView.setSubmitButtonEnabled(true);
 
         customizeSubmitButton(searchView);
+        customizeCloseButton(searchView);
         setSearchViewListener(searchView);
 
         return true;
