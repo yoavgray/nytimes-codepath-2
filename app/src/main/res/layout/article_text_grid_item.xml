@@ -23,7 +23,7 @@
         android:layout_below="@id/text_view_article_title"
         android:layout_alignParentLeft="true"
         android:ellipsize="end"
-        android:maxLines="10"
+        android:maxLines="5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/grid_item_components_margin_bottom"/>

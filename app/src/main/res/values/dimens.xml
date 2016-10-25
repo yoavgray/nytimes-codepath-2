@@ -7,6 +7,4 @@
     <dimen name="layout_side_margin">8dp</dimen>
     <dimen name="list_item_horizontal_padding">2dp</dimen>
     <dimen name="category_recycle_view_height">44dp</dimen>
-    <dimen name="large_font">22sp</dimen>
-    <dimen name="filter_fragment_horiz_margin">6dp</dimen>
 </resources>
