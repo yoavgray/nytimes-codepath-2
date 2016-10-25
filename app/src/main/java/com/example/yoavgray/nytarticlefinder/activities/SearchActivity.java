@@ -107,6 +107,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         ButterKnife.bind(this);
         setCalligraphy();
         setNetwork();
+        articles = new ArrayList<>();
 
         if (savedInstanceState != null) {
             sortId = savedInstanceState.getInt(SORT_ID);
@@ -119,7 +120,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             beginDate = null;
             endDate = null;
         }
-        articles = new ArrayList<>();
+
         // Setup Layouts
         setupToolBar();
         setCategoriesRecyclerView();
@@ -128,7 +129,6 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         setupSwipeRefreshLayout();
 
         checkConnectivity();
-        //TODO: remember last search
         loadArticles(0);
     }
 
@@ -217,9 +217,22 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         articlesRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                loadArticles(page);
+                // Make sure there's a small delay between requests
+                delayedLoadArticles(page);
             }
         });
+    }
+
+    // Have a handler to load articles with a delay
+    private void delayedLoadArticles(int page) {
+        Handler handler = new Handler();
+        Runnable runnableCode = () -> {
+            // Do something here on the main thread
+            loadArticles(page);
+            Log.d("Handlers", "Called on main thread");
+        };
+        // Run the above code block on the main thread after 2 seconds
+        handler.postDelayed(runnableCode, 1500);
     }
 
     /**
@@ -322,6 +335,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         }
     }
 
+    // Check that the device is online by using famous ping!
     public boolean isOnline() {
         Runtime runtime = Runtime.getRuntime();
         try {
@@ -344,13 +358,13 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             articleAdapter.notifyDataSetChanged();
         }
 
-        // Get a handler that can be used to post to the main thread
         client.getArticles(queryParamsHashMap, includedCategoriesHashSet, page, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 checkConnectivity();
                 SearchActivity.this.runOnUiThread(() -> swipeRefreshLayout.setRefreshing(false));
+                delayedLoadArticles(page);
             }
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
@@ -378,7 +392,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
     /**
      * This method sets a listener for when submiting a text query or changing text
-     * in the search field //TODO: add suggestions if have time
+     * in the search field
      * @param searchView
      */
     private void setSearchViewListener(SearchView searchView) {
