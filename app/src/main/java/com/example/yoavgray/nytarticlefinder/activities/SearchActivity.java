@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +27,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.ImageView;
@@ -37,6 +39,7 @@ import com.example.yoavgray.nytarticlefinder.adapters.CategoryAdapter;
 import com.example.yoavgray.nytarticlefinder.fragments.FilterFragment;
 import com.example.yoavgray.nytarticlefinder.models.Article;
 import com.example.yoavgray.nytarticlefinder.models.Category;
+import com.example.yoavgray.nytarticlefinder.utils.Client;
 import com.example.yoavgray.nytarticlefinder.utils.EndlessRecyclerViewScrollListener;
 import com.example.yoavgray.nytarticlefinder.utils.ItemClickSupport;
 import com.example.yoavgray.nytarticlefinder.utils.SpacesItemDecoration;
@@ -62,16 +65,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SearchActivity extends AppCompatActivity implements FilterFragment.PrefParamsSelectedListener {
-    public static final String ARTICLE_API_KEY = "58b8ef6b492349d4b3a3c2968d411aa6";
-    public final static String NYTIMES_URL = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
     private static final String INCLUDED_CATEGORIES = "includedCategories";
     private static final String CATEGORIES_LIST = "categoriesList";
     private static final String SORT_ID = "sort";
@@ -91,7 +89,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     List<Article> articles;
     CategoryAdapter categoriesAdapter;
     ArticleAdapter articleAdapter;
-    OkHttpClient client;
+    Client client;
 
     @BindView(R.id.app_search_bar) Toolbar appSearchBar;
     @BindView(R.id.articles_recycler_view) RecyclerView articlesRecyclerView;
@@ -108,9 +106,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
         setCalligraphy();
-
-        queryParamsHashMap = new HashMap<>();
-        queryParamsHashMap.put("api-key",ARTICLE_API_KEY);
+        setNetwork();
 
         if (savedInstanceState != null) {
             sortId = savedInstanceState.getInt(SORT_ID);
@@ -123,7 +119,6 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             beginDate = null;
             endDate = null;
         }
-        client = new OkHttpClient();
         articles = new ArrayList<>();
         // Setup Layouts
         setupToolBar();
@@ -165,6 +160,15 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     }
 
     /**
+     * Set networking params
+     */
+    private void setNetwork() {
+        client = new Client();
+        queryParamsHashMap = new HashMap<>();
+        queryParamsHashMap.put("api-key",client.getApiKey());
+    }
+
+    /**
      * This method sets the Toolbar on start
      */
     private void setupToolBar() {
@@ -200,9 +204,9 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         StaggeredGridLayoutManager gridLayoutManager;
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            gridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+            gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         } else {
-            gridLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+            gridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         }
         // Attach the layout manager to the recycler view
         articlesRecyclerView.setLayoutManager(gridLayoutManager);
@@ -340,21 +344,14 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             articleAdapter.notifyDataSetChanged();
         }
 
-        String url = buildQueryParamsUrl(page);
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
         // Get a handler that can be used to post to the main thread
-        client.newCall(request).enqueue(new Callback() {
+        client.getArticles(queryParamsHashMap, includedCategoriesHashSet, page, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 checkConnectivity();
                 SearchActivity.this.runOnUiThread(() -> swipeRefreshLayout.setRefreshing(false));
             }
-
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 if (!response.isSuccessful()) {
@@ -377,30 +374,6 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                 }
             }
         });
-    }
-
-    /**
-     * Build query params according to filters that were saved by the user
-     * @return a full URL, ready to be delivered
-     */
-    private String buildQueryParamsUrl(int page) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(NYTIMES_URL).newBuilder();
-        for (String key : queryParamsHashMap.keySet()) {
-            urlBuilder.addQueryParameter(key, queryParamsHashMap.get(key));
-        }
-        urlBuilder.addQueryParameter(PAGE_KEY, String.valueOf(page));
-        if (includedCategoriesHashSet.size() > 0) {
-            StringBuilder newsDeskParam = new StringBuilder("news_desk:(");
-            for (String setEntry : includedCategoriesHashSet) {
-                newsDeskParam.append('"').append(setEntry).append('"').append(" ");
-            }
-            // For the last white space
-            newsDeskParam.setLength(newsDeskParam.length() - 1);
-            newsDeskParam.append(")");
-            urlBuilder.addQueryParameter(NEWS_DESK, newsDeskParam.toString());
-        }
-
-        return urlBuilder.build().toString();
     }
 
     /**
